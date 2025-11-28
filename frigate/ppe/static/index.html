@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <title>PPE Live Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      body { background:#0b0e14; color:#e6eef6; font-family: Arial, Tahoma; margin:0; padding:18px; }
+      header { text-align:center; color:#00e8ff; font-weight:700; font-size:20px; margin-bottom:14px; text-shadow:0 0 8px #00bcd4; }
+      .controls { display:flex; gap:8px; justify-content:center; align-items:center; flex-wrap:wrap; margin-bottom:12px; }
+      select,input,button { padding:8px 10px; border-radius:8px; border:none; background:#13202b; color:#e6eef6; }
+      #start { background:#16a34a; }
+      #stop { background:#ef4444; }
+      #streamBox { display:flex; justify-content:center; align-items:center; margin:auto; max-width:1100px; }
+      #stream { width:100%; max-width:1100px; border-radius:10px; border:4px solid #0f1724; background:#000; }
+      .loader { position:absolute; width:56px; height:56px; border:5px solid #2b3946; border-top:5px solid #00eaff; border-radius:50%; animation:spin 1s linear infinite; display:none; }
+      @keyframes spin { to { transform: rotate(360deg); } }
+      .events { margin-top:12px; max-width:1100px; margin-left:auto; margin-right:auto; background:#071021; padding:12px; border-radius:10px; border:1px solid #132233; }
+      .evt { background:#0f2030; padding:8px; margin-bottom:8px; border-radius:6px; }
+      .small { font-size:13px; color:#9fb1c9; }
+      .stats { display:flex; gap:18px; justify-content:center; margin-top:8px; }
+      .stat { background:#071a26; padding:10px 12px; border-radius:8px; border:1px solid #123; min-width:120px; text-align:center; }
+      .stat strong { font-size:20px; color:#00eaff; display:block; }
+      #detsList, #tracksList { max-height:160px; overflow:auto; margin-top:8px; padding:6px; background:#06131a; border-radius:6px; }
+    </style>
+  </head>
+  <body>
+    <header>داشبورد زنده تشخیص PPE و رخدادهای امنیتی</header>
+
+    <div class="controls">
+      <select id="source">
+        <option value="webcam">وب‌کم</option>
+        <option value="file">فایل</option>
+        <option value="rtsp">RTSP</option>
+      </select>
+
+      <input id="rtsp" placeholder="rtsp://user:pass@ip:554/..." style="display:none; width:320px;" />
+      <input id="file" type="file" accept="video/*" style="display:none;" />
+      <button id="start">شروع</button>
+      <button id="stop">توقف</button>
+    </div>
+
+    <div class="stats">
+      <div class="stat">افراد<br><strong id="s_person">0</strong></div>
+      <div class="stat">کلاه ایمنی<br><strong id="s_helmet">0</strong></div>
+      <div class="stat">جلیقه<br><strong id="s_vest">0</strong></div>
+    </div>
+
+    <div id="streamBox" style="position:relative;">
+      <div class="loader" id="loader"></div>
+      <img id="stream" src="" alt="stream" />
+    </div>
+
+    <div class="events">
+      <div class="small">لیست تشخیص‌ها (دقت و برچسب)</div>
+      <div id="detsList"></div>
+      <div class="small" style="margin-top:8px;">Tracks (ردیابی افراد)</div>
+      <div id="tracksList"></div>
+    </div>
+
+  <script>
+    const sourceSel = document.getElementById("source");
+    const rtspInput = document.getElementById("rtsp");
+    const fileInput = document.getElementById("file");
+    const startBtn = document.getElementById("start");
+    const stopBtn = document.getElementById("stop");
+    const img = document.getElementById("stream");
+    const loader = document.getElementById("loader");
+    const detsList = document.getElementById("detsList");
+    const tracksList = document.getElementById("tracksList");
+
+    let ws = null;
+
+    sourceSel.addEventListener("change", ()=> {
+      rtspInput.style.display = sourceSel.value === "rtsp" ? "inline-block" : "none";
+      fileInput.style.display = sourceSel.value === "file" ? "inline-block" : "none";
+    });
+
+    function wsProtocol() {
+      return location.protocol === "https:" ? "wss" : "ws";
+    }
+
+    async function openWebSocket() {
+      if (ws) {
+        try { ws.close(); } catch {}
+        ws = null;
+      }
+      const url = `${wsProtocol()}://${location.host}/ws/live`;
+      ws = new WebSocket(url);
+      ws.onopen = ()=> { loader.style.display = "block"; console.log("ws open"); };
+      ws.onclose = ()=> { loader.style.display = "none"; console.log("ws closed"); };
+      ws.onerror = (e)=> { console.error("ws err", e); };
+      ws.onmessage = (evt)=> {
+        try {
+          const data = JSON.parse(evt.data);
+          if (data.type === "frame") {
+            loader.style.display = "none";
+            img.src = "data:image/jpeg;base64," + data.frame;
+            // stats
+            if (data.stats) {
+              document.getElementById("s_person").innerText = data.stats.person;
+              document.getElementById("s_helmet").innerText = data.stats.helmet;
+              document.getElementById("s_vest").innerText = data.stats.vest;
+            }
+            // detections list
+            detsList.innerHTML = "";
+            if (data.detections && data.detections.length>0) {
+              data.detections.slice().reverse().forEach(d=>{
+                const div = document.createElement("div");
+                div.className = "evt";
+                div.innerText = `${d.label} — ${d.conf.toFixed(2)} — [${d.box.join(",")}]`;
+                detsList.appendChild(div);
+              });
+            }
+            // tracker list
+            tracksList.innerHTML = "";
+            if (data.tracks && data.tracks.length>0) {
+              data.tracks.slice().reverse().forEach(t=>{
+                const div = document.createElement("div");
+                div.className = "evt";
+                div.innerText = `ID:${t.id} — helmet:${t.has_helmet} vest:${t.has_vest} — [${t.box.join(",")}]`;
+                tracksList.appendChild(div);
+              });
+            }
+          }
+        } catch (err) {
+          console.error("parse error", err);
+        }
+      };
+    }
+
+    startBtn.addEventListener("click", async ()=> {
+      loader.style.display = "block";
+      img.src = "";
+      const val = sourceSel.value;
+      if (val === "file") {
+        if (!fileInput.files.length) { alert("ابتدا فایل انتخاب شود"); loader.style.display="none"; return; }
+        const form = new FormData(); form.append("file", fileInput.files[0]);
+        const res = await fetch("/upload", { method:"POST", body: form });
+        const j = await res.json();
+        await fetch(`/start?source=${encodeURIComponent(j.path)}`);
+      } else if (val === "rtsp") {
+        const r = rtspInput.value.trim();
+        if (!r) { alert("آدرس RTSP را وارد کنید"); loader.style.display="none"; return; }
+        await fetch(`/start?source=${encodeURIComponent(r)}`);
+      } else {
+        await fetch(`/start?source=webcam`);
+      }
+      await openWebSocket();
+    });
+
+    stopBtn.addEventListener("click", async ()=> {
+      loader.style.display = "none";
+      if (ws) {
+        try { ws.close(); } catch {}
+        ws = null;
+      }
+      await fetch("/stop");
+    });
+  </script>
+  </body>
+</html>
