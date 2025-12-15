@@ -339,14 +339,14 @@ export default function GeneralSettings({ className }: GeneralSettingsProps) {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <SubItem>
-              <SubItemTrigger
+              {/* <SubItemTrigger
                 className={
                   isDesktop ? "cursor-pointer" : "flex items-center p-2 text-sm"
                 }
               >
                 <LuLanguages className="mr-2 size-4" />
                 <span>{t("menu.languages")}</span>
-              </SubItemTrigger>
+              </SubItemTrigger> */}
               <Portal>
                 <SubItemContent
                   className={
