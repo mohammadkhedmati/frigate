@@ -8,7 +8,7 @@ services:
       - "110" # render
       - "44"  # video
       - "46"  # plugdev
-    shm_size: "256mb"
+    shm_size: "1024mb"
     build:
       context: .
       dockerfile: docker/main/Dockerfile
@@ -37,7 +37,7 @@ services:
       - ./web/dist:/opt/frigate/web:cached
       - /etc/localtime:/etc/localtime:ro
       - ./config:/config
-      - ./debug:/media/frigate
+      - /media/khedmati/01FE8BEB52094D48/frigate:/media/frigate
      # - /dev/bus/usb:/dev/bus/usb # Uncomment for Google Coral USB
   mqtt:
     container_name: mqtt

@@ -27,3 +27,8 @@ to use the app
 
 use it for stop it
 `docker exec frigate-devcontainer bash -c "pkill -f 'python3 -m frigate' || true"`
+
+sample .env for frontend
+
+VITE_GIT_COMMIT_HASH=e1545a8d
+PROXY_HOST=127.0.0.1:8971
