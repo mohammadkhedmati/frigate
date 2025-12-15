@@ -1,6 +1,6 @@
 {
-  "documentTitle": "Live - Frigate",
-  "documentTitle.withCamera": "{{camera}} - Live - Frigate",
+  "documentTitle": "Live - VisionGuard",
+  "documentTitle.withCamera": "{{camera}} - Live - VisionGuard",
   "twoWayTalk": {
     "enable": "Aktivér tovejskommunikation",
     "disable": "Deaktiver tovejskommunikation"

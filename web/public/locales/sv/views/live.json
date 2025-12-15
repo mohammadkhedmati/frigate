@@ -1,6 +1,6 @@
 {
-  "documentTitle": "Live - Frigate",
-  "documentTitle.withCamera": "{{camera}} - Live - Frigate",
+  "documentTitle": "Live - VisionGuard",
+  "documentTitle.withCamera": "{{camera}} - Live - VisionGuard",
   "twoWayTalk": {
     "enable": "Aktivera tvåvägssamtal",
     "disable": "Avaktivera tvåvägssamtal"
@@ -173,7 +173,7 @@
   },
   "noCameras": {
     "title": "Inga kameror konfigurerade",
-    "description": "Börja med att ansluta en kamera till Frigate.",
+    "description": "Börja med att ansluta en kamera till VisionGuard.",
     "buttonText": "Lägg till kamera",
     "restricted": {
       "title": "Inga kameror tillgängliga",
