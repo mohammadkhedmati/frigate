@@ -1,8 +1,8 @@
 import {
   LuActivity,
-  LuGithub,
+  // LuGithub,
   LuLanguages,
-  LuLifeBuoy,
+  // LuLifeBuoy,
   LuList,
   LuLogOut,
   LuMoon,
@@ -64,7 +64,7 @@ import { FrigateConfig } from "@/types/frigateConfig";
 import { useTranslation } from "react-i18next";
 import { supportedLanguageKeys } from "@/lib/const";
 
-import { useDocDomain } from "@/hooks/use-doc-domain";
+// import { useDocDomain } from "@/hooks/use-doc-domain";
 import { MdCategory } from "react-icons/md";
 
 type GeneralSettingsProps = {
@@ -73,7 +73,7 @@ type GeneralSettingsProps = {
 
 export default function GeneralSettings({ className }: GeneralSettingsProps) {
   const { t } = useTranslation(["common", "views/settings"]);
-  const { getLocaleDocUrl } = useDocDomain();
+  // const { getLocaleDocUrl } = useDocDomain();
   const { data: profile } = useSWR("profile");
   const { data: config } = useSWR<FrigateConfig>("config");
   const logoutUrl = config?.proxy?.logout_url || "/api/logout";
