@@ -35,7 +35,7 @@ import RolesView from "@/views/settings/RolesView";
 import NotificationView from "@/views/settings/NotificationsSettingsView";
 import EnrichmentsSettingsView from "@/views/settings/EnrichmentsSettingsView";
 import UiSettingsView from "@/views/settings/UiSettingsView";
-import FrigatePlusSettingsView from "@/views/settings/FrigatePlusSettingsView";
+// import FrigatePlusSettingsView from "@/views/settings/FrigatePlusSettingsView";
 import { useSearchEffect } from "@/hooks/use-overlay-state";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useInitialCameraState } from "@/api/ws";
@@ -80,7 +80,7 @@ const allSettingsViews = [
   "users",
   "roles",
   "notifications",
-  "frigateplus",
+  // "frigateplus",
 ] as const;
 type SettingsType = (typeof allSettingsViews)[number];
 
@@ -116,10 +116,10 @@ const settingsGroups = [
       { key: "triggers", component: TriggerView },
     ],
   },
-  {
-    label: "frigateplus",
-    items: [{ key: "frigateplus", component: FrigatePlusSettingsView }],
-  },
+  // {
+  //   label: "frigateplus",
+  //   items: [{ key: "frigateplus", component: FrigatePlusSettingsView }],
+  // },
 ];
 
 const CAMERA_SELECT_BUTTON_PAGES = [
