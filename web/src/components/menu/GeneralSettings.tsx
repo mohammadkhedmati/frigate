@@ -499,11 +499,11 @@ export default function GeneralSettings({ className }: GeneralSettingsProps) {
                 </SubItemContent>
               </Portal>
             </SubItem>
-            <DropdownMenuLabel className={isDesktop ? "mt-3" : "mt-1"}>
+            {/* <DropdownMenuLabel className={isDesktop ? "mt-3" : "mt-1"}>
               {t("menu.help")}
-            </DropdownMenuLabel>
+            </DropdownMenuLabel> */}
             <DropdownMenuSeparator />
-            <a href={getLocaleDocUrl("/")} target="_blank">
+            {/* <a href={getLocaleDocUrl("/")} target="_blank">
               <MenuItem
                 className={
                   isDesktop ? "cursor-pointer" : "flex items-center p-2 text-sm"
@@ -513,8 +513,8 @@ export default function GeneralSettings({ className }: GeneralSettingsProps) {
                 <LuLifeBuoy className="mr-2 size-4" />
                 <span>{t("menu.documentation.title")}</span>
               </MenuItem>
-            </a>
-            <a
+            </a> */}
+            {/* <a
               href="https://github.com/blakeblackshear/frigate"
               target="_blank"
             >
@@ -527,7 +527,7 @@ export default function GeneralSettings({ className }: GeneralSettingsProps) {
                 <LuGithub className="mr-2 size-4" />
                 <span>GitHub</span>
               </MenuItem>
-            </a>
+            </a> */}
             {isAdmin && (
               <>
                 <DropdownMenuSeparator

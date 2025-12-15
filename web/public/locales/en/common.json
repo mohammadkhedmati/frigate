@@ -226,7 +226,7 @@
       "title": "Documentation",
       "label": "Frigate documentation"
     },
-    "restart": "Restart Frigate",
+    "restart": "Reboot System",
     "live": {
       "title": "Live",
       "allCameras": "All Cameras",
