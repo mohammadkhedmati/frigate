@@ -87,20 +87,18 @@ if [[ "${TARGETARCH}" == "amd64" ]]; then
     # intel packages use zst compression so we need to update dpkg
     apt-get install -y dpkg
 
-    # use intel apt intel packages
-    wget -qO - https://repositories.intel.com/gpu/intel-graphics.key | gpg --yes --dearmor --output /usr/share/keyrings/intel-graphics.gpg
-    echo "deb [arch=amd64 signed-by=/usr/share/keyrings/intel-graphics.gpg] https://repositories.intel.com/gpu/ubuntu jammy client" | tee /etc/apt/sources.list.d/intel-gpu-jammy.list
-    apt-get -qq update
-    apt-get -qq install --no-install-recommends --no-install-suggests -y \
-        intel-media-va-driver-non-free libmfx1 libmfxgen1 libvpl2
+    # use intel apt intel packages - COMMENTED OUT DUE TO 403 ERRORS
+    # The packages intel-media-va-driver-non-free, libmfx1, libmfxgen1 are not critical
+    # cat /deps/intel-graphics.key | gpg --yes --dearmor --output /usr/share/keyrings/intel-graphics.gpg
+    # echo "deb [arch=amd64 signed-by=/usr/share/keyrings/intel-graphics.gpg] https://repositories.intel.com/gpu/ubuntu jammy client" | tee /etc/apt/sources.list.d/intel-gpu-jammy.list
+    # apt-get -qq update
+    # apt-get -qq install --no-install-recommends --no-install-suggests -y \
+    #     intel-media-va-driver-non-free libmfx1 libmfxgen1 libvpl2
 
     apt-get -qq install -y ocl-icd-libopencl1
 
     # install libtbb12 for NPU support
     apt-get -qq install -y libtbb12
-
-    rm -f /usr/share/keyrings/intel-graphics.gpg
-    rm -f /etc/apt/sources.list.d/intel-gpu-jammy.list
 
     # install legacy and standard intel icd and level-zero-gpu
     # see https://github.com/intel/compute-runtime/blob/master/LEGACY_PLATFORMS.md for more info
