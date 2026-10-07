@@ -9,10 +9,21 @@
 # The UI is then at https://localhost:8971. On first start the admin password is
 # printed to the container logs.
 services:
+  mqtt:
+    container_name: mehrsunai-mqtt
+    image: eclipse-mosquitto:2
+    restart: unless-stopped
+    volumes:
+      - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+      - mosquitto-data:/mosquitto/data
+      - mosquitto-log:/mosquitto/log
+
   mehrsunai:
     container_name: mehrsunai
     image: frigate:latest-tensorrt
     restart: unless-stopped
+    depends_on:
+      - mqtt
     # Give the recording/detection processes time to flush on shutdown.
     stop_grace_period: 30s
     # Roughly 10MB per camera plus overhead. Raise this if you add cameras or
@@ -54,3 +65,7 @@ services:
       # Referenced from config.yml as {FRIGATE_RTSP_PASSWORD} so camera
       # credentials stay out of the config file.
       FRIGATE_RTSP_PASSWORD: "changeme"
+
+volumes:
+  mosquitto-data:
+  mosquitto-log:
