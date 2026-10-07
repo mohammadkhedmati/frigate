@@ -1,7 +1,18 @@
-import i18n, { t } from "i18next";
+import i18n, { t, type PostProcessorModule } from "i18next";
 import { initReactI18next } from "react-i18next";
 import HttpBackend from "i18next-http-backend";
 import { EventType } from "@/types/search";
+import { applyBrand } from "@/lib/branding";
+
+// Rewrites upstream's product name in every translated string, for every
+// language, so the locale bundles can stay untouched from upstream. Runs after
+// interpolation, so it also covers values spliced into a string.
+const brandPostProcessor: PostProcessorModule = {
+  type: "postProcessor",
+  name: "brand",
+  process: (value: string) =>
+    typeof value === "string" ? applyBrand(value) : value,
+};
 
 export const getTranslatedLabel = (
   label: string,
@@ -29,8 +40,11 @@ export const getTranslatedLabel = (
 i18n
   .use(initReactI18next)
   .use(HttpBackend)
+  .use(brandPostProcessor)
   .init({
     fallbackLng: "en", // use en if detected lng is not available
+
+    postProcess: ["brand"],
 
     backend: {
       loadPath: `locales/{{lng}}/{{ns}}.json?v=${import.meta.env.VITE_GIT_COMMIT_HASH || "unknown"}`,

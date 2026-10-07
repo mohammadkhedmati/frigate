@@ -45,7 +45,7 @@ from frigate.config.camera.updater import (
     CameraConfigUpdateEnum,
     CameraConfigUpdateTopic,
 )
-from frigate.const import REDACTED_CREDENTIAL_SENTINEL
+from frigate.const import APP_NAME, REDACTED_CREDENTIAL_SENTINEL
 from frigate.ffmpeg_presets import FFMPEG_HWACCEL_VAAPI, _gpu_selector
 from frigate.genai import PROVIDERS, load_providers
 from frigate.jobs.media_sync import (
@@ -104,7 +104,7 @@ _PROBE_OUTER_TIMEOUT_SECONDS = 15
     "/", response_class=PlainTextResponse, dependencies=[Depends(allow_public())]
 )
 def is_healthy():
-    return "Frigate is running. Alive and healthy!"
+    return f"{APP_NAME} is running. Alive and healthy!"
 
 
 @router.get("/config/schema.json", dependencies=[Depends(allow_public())])
@@ -634,7 +634,7 @@ def config_save(save_option: str, body: Any = Body(media_type="text/plain")):
             content=(
                 {
                     "success": False,
-                    "message": "Could not write config file, be sure that Frigate has write permission on the config file.",
+                    "message": f"Could not write config file, be sure that {APP_NAME} has write permission on the config file.",
                 }
             ),
             status_code=400,
@@ -644,12 +644,12 @@ def config_save(save_option: str, body: Any = Body(media_type="text/plain")):
         try:
             restart_frigate()
         except Exception as e:
-            logging.error(f"Error restarting Frigate: {e}")
+            logging.error(f"Error restarting {APP_NAME}: {e}")
             return JSONResponse(
                 content=(
                     {
                         "success": True,
-                        "message": "Config successfully saved, unable to restart Frigate",
+                        "message": f"Config successfully saved, unable to restart {APP_NAME}",
                     }
                 ),
                 status_code=200,
@@ -1180,12 +1180,12 @@ def restart():
     try:
         restart_frigate()
     except Exception as e:
-        logging.error(f"Error restarting Frigate: {e}")
+        logging.error(f"Error restarting {APP_NAME}: {e}")
         return JSONResponse(
             content=(
                 {
                     "success": False,
-                    "message": "Unable to restart Frigate.",
+                    "message": f"Unable to restart {APP_NAME}.",
                 }
             ),
             status_code=500,

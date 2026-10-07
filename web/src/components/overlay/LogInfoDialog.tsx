@@ -19,6 +19,7 @@ import { useMemo } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useDocDomain } from "@/hooks/use-doc-domain";
+import { APP_NAME } from "@/lib/branding";
 
 type LogInfoDialogProps = {
   logLine?: LogLine;
@@ -118,7 +119,7 @@ function useHelpfulLinks(content: string | undefined) {
         link: getLocaleDocUrl(
           "configuration/record#will-frigate-delete-old-recordings-if-my-storage-runs-out",
         ),
-        text: "Frigate Automatic Storage Cleanup",
+        text: `${APP_NAME} Automatic Storage Cleanup`,
       });
     }
 

@@ -23,7 +23,7 @@ from frigate.config.camera.updater import (
     CameraConfigUpdateEnum,
     CameraConfigUpdateSubscriber,
 )
-from frigate.const import BASE_DIR, CONFIG_DIR
+from frigate.const import APP_NAME, BASE_DIR, CONFIG_DIR
 from frigate.models import User
 
 logger = logging.getLogger(__name__)
@@ -402,7 +402,7 @@ class WebPushClient(Communicator):
                 user=user,
                 payload={},
                 title="Test Notification",
-                message="This is a test notification from Frigate.",
+                message=f"This is a test notification from {APP_NAME}.",
                 direct_url="/",
                 notification_type="test",
             )

@@ -1,6 +1,12 @@
 import os
 import re
 
+# Product name for this fork, used in user-facing log lines, API messages, and
+# notification copy. Filesystem paths, the python package name, env vars, and
+# MQTT topics deliberately keep the upstream "frigate" spelling: they are
+# contracts with the host, the Home Assistant integration, and existing installs.
+APP_NAME = "Mehrsunai"
+
 INSTALL_DIR = "/opt/frigate"
 CONFIG_DIR = "/config"
 DEFAULT_DB_PATH = f"{CONFIG_DIR}/frigate.db"

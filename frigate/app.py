@@ -33,6 +33,7 @@ from frigate.config.config import FrigateConfig
 from frigate.config.holder import ConfigHolder
 from frigate.config.profile_manager import ProfileManager
 from frigate.const import (
+    APP_NAME,
     CACHE_DIR,
     CLIPS_DIR,
     CONFIG_DIR,
@@ -625,7 +626,7 @@ class FrigateApp:
                 logger.info("********************************************************")
 
     def start(self) -> None:
-        logger.info(f"Starting Frigate ({VERSION})")
+        logger.info(f"Starting {APP_NAME} ({VERSION})")
 
         # Ensure global state.
         self.ensure_dirs()

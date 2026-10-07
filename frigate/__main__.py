@@ -10,6 +10,7 @@ from pydantic import ValidationError
 
 from frigate.app import FrigateApp
 from frigate.config import FrigateConfig
+from frigate.const import APP_NAME
 from frigate.log import setup_logging
 from frigate.util.config import find_config_file
 
@@ -32,7 +33,7 @@ def main() -> None:
 
     # Parse the cli arguments.
     parser = argparse.ArgumentParser(
-        prog="Frigate",
+        prog=APP_NAME,
         description="An NVR with realtime local object detection for IP cameras.",
     )
     parser.add_argument("--validate-config", action="store_true")
@@ -106,9 +107,9 @@ def main() -> None:
         # attempt to start Frigate in recovery mode
         try:
             config = FrigateConfig.load(install=True, safe_load=True)
-            print("Starting Frigate in safe mode.")
+            print(f"Starting {APP_NAME} in safe mode.")
         except ValidationError:
-            print("Unable to start Frigate in safe mode.")
+            print(f"Unable to start {APP_NAME} in safe mode.")
             sys.exit(1)
     if args.validate_config:
         print("*************************************************************")

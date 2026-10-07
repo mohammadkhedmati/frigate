@@ -31,7 +31,7 @@ from frigate.api.defs.tags import Tags
 from frigate.config import FrigateConfig
 from frigate.config.camera import DetectConfig
 from frigate.config.classification import ObjectClassificationType
-from frigate.const import CLIPS_DIR, FACE_DIR, MODEL_CACHE_DIR
+from frigate.const import APP_NAME, CLIPS_DIR, FACE_DIR, MODEL_CACHE_DIR
 from frigate.embeddings import EmbeddingsContext
 from frigate.models import Event
 from frigate.util.classification import (
@@ -315,7 +315,7 @@ def register_face(request: Request, name: str, file: UploadFile):
             status_code=500,
             content={
                 "success": False,
-                "message": "Could not process request. Try restarting Frigate.",
+                "message": f"Could not process request. Try restarting {APP_NAME}.",
             },
         )
 
@@ -348,7 +348,7 @@ def recognize_face(request: Request, file: UploadFile):
             status_code=500,
             content={
                 "success": False,
-                "message": "Could not process request. Try restarting Frigate.",
+                "message": f"Could not process request. Try restarting {APP_NAME}.",
             },
         )
 
@@ -503,7 +503,7 @@ def rename_face(request: Request, old_name: str, body: RenameFaceBody):
         return JSONResponse(
             status_code=400,
             content={
-                "message": "Error renaming face. Check Frigate logs.",
+                "message": f"Error renaming face. Check {APP_NAME} logs.",
                 "success": False,
             },
         )

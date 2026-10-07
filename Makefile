@@ -2,7 +2,8 @@ default_target: local
 
 COMMIT_HASH := $(shell git log -1 --pretty=format:"%h"|tail -1)
 VERSION = 0.19.0
-IMAGE_REPO ?= ghcr.io/blakeblackshear/frigate
+IMAGE_NAME ?= mehrsunai-nvr
+IMAGE_REPO ?= ghcr.io/mohammadkhedmati/mehrsunai-nvr
 GITHUB_REF_NAME ?= $(shell git rev-parse --abbrev-ref HEAD)
 BOARDS= #Initialized empty
 
@@ -18,13 +19,13 @@ version:
 
 local: version
 	docker buildx build --target=frigate --file docker/main/Dockerfile . \
-		--tag frigate:latest \
+		--tag $(IMAGE_NAME):latest \
 		--load
 
 debug: version
 	docker buildx build --target=frigate --file docker/main/Dockerfile . \
 	    --build-arg DEBUG=true \
-		--tag frigate:latest \
+		--tag $(IMAGE_NAME):latest \
 		--load
 
 amd64:
@@ -50,12 +51,12 @@ push: push-boards
 
 run: local
 	docker run --rm --publish=5000:5000 --publish=8971:8971 \
-		--volume=${PWD}/config:/config frigate:latest
+		--volume=${PWD}/config:/config $(IMAGE_NAME):latest
 
 run_tests: local
-	docker run --rm --workdir=/opt/frigate --entrypoint= frigate:latest \
+	docker run --rm --workdir=/opt/frigate --entrypoint= $(IMAGE_NAME):latest \
 		python3 -u -m unittest
-	docker run --rm --workdir=/opt/frigate --entrypoint= frigate:latest \
+	docker run --rm --workdir=/opt/frigate --entrypoint= $(IMAGE_NAME):latest \
 		python3 -u -m mypy --config-file frigate/mypy.ini frigate
 
 .PHONY: run_tests

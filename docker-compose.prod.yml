@@ -1,0 +1,56 @@
+# Production deployment for Mehrsunai.
+#
+# The docker-compose.yml next to this file is the *devcontainer* setup (it builds
+# from source and bind-mounts the working tree); this file runs the built image.
+#
+#   make local-trt                                # builds frigate:latest-tensorrt (NVIDIA GPU)
+#   docker compose -f docker-compose.prod.yml up -d
+#
+# The UI is then at https://localhost:8971. On first start the admin password is
+# printed to the container logs.
+services:
+  mehrsunai:
+    container_name: mehrsunai
+    image: frigate:latest-tensorrt
+    restart: unless-stopped
+    # Give the recording/detection processes time to flush on shutdown.
+    stop_grace_period: 30s
+    # Roughly 10MB per camera plus overhead. Raise this if you add cameras or
+    # run at high resolution, otherwise ffmpeg will fail to allocate frames.
+    shm_size: "512mb"
+    # Uncomment for a Google Coral USB accelerator:
+    # devices:
+    #   - /dev/bus/usb:/dev/bus/usb
+    # Uncomment for a PCIe Coral:
+    #   - /dev/apex_0:/dev/apex_0
+    runtime: nvidia
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      # These container paths are fixed in frigate/const.py and must not change.
+      - ./config:/config
+      - /media/MehrsunaiFiles/FrigateStorage:/media/frigate
+      # Recording segments are written here before being moved to storage.
+      # Keeping it in RAM avoids constant writes to the recording disk.
+      - type: tmpfs
+        target: /tmp/cache
+        tmpfs:
+          size: 1000000000
+    ports:
+      - "8971:8971" # authenticated UI and API over TLS
+      # Port 5000 is the same API with NO authentication. Leave it unpublished
+      # unless you are deliberately putting your own proxy in front of it.
+      # - "5000:5000"
+      - "8554:8554" # RTSP restream
+      - "8555:8555/tcp" # WebRTC over TCP
+      - "8555:8555/udp" # WebRTC over UDP
+    environment:
+      # Referenced from config.yml as {FRIGATE_RTSP_PASSWORD} so camera
+      # credentials stay out of the config file.
+      FRIGATE_RTSP_PASSWORD: "changeme"

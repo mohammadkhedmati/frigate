@@ -39,10 +39,10 @@ function set_libva_version() {
     export LIBAVFORMAT_VERSION_MAJOR
 }
 
-echo "[INFO] Preparing Frigate..."
+echo "[INFO] Preparing Mehrsunai..."
 set_libva_version
 
-echo "[INFO] Starting Frigate..."
+echo "[INFO] Starting Mehrsunai..."
 
 cd /opt/frigate || echo "[ERROR] Failed to change working directory to /opt/frigate"
 

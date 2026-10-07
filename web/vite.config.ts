@@ -56,4 +56,24 @@ export default defineConfig({
       "@": path.resolve(import.meta.dirname, "./src"),
     },
   },
+  test: {
+    environment: "jsdom",
+    // Without this, vitest's default glob also picks up e2e/specs/*.spec.ts,
+    // which are Playwright tests and throw on collection.
+    include: ["src/**/*.{test,spec}.{ts,tsx}"],
+    alias: {
+      "testing-library": path.resolve(
+        __dirname,
+        "./__test__/testing-library.js",
+      ),
+    },
+    setupFiles: ["./__test__/test-setup.ts"],
+    includeSource: ["src/**/*.{js,jsx,ts,tsx}"],
+    coverage: {
+      reporter: ["text-summary", "text"],
+    },
+    mockReset: true,
+    restoreMocks: true,
+    globals: true,
+  },
 });

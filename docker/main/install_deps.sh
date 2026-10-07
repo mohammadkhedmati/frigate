@@ -107,16 +107,24 @@ if [[ "${TARGETARCH}" == "amd64" ]]; then
     apt-get install -y dpkg
 
     # use intel apt repo for libmfx1 (legacy QSV, pre-Gen12)
-    wget -qO - https://repositories.intel.com/gpu/intel-graphics.key | gpg --yes --dearmor --output /usr/share/keyrings/intel-graphics.gpg
-    echo "deb [arch=amd64 signed-by=/usr/share/keyrings/intel-graphics.gpg] https://repositories.intel.com/gpu/ubuntu jammy client" | tee /etc/apt/sources.list.d/intel-gpu-jammy.list
-    apt-get -qq update
+    # repositories.intel.com refuses connections from some regions. libmfx1 only
+    # benefits pre-Gen12 Intel iGPUs, so treat it as optional rather than failing
+    # the whole image build. Behavior is unchanged where the repo is reachable.
+    if wget -q -O /tmp/intel-graphics.key https://repositories.intel.com/gpu/intel-graphics.key; then
+        gpg --yes --dearmor --output /usr/share/keyrings/intel-graphics.gpg < /tmp/intel-graphics.key
+        rm -f /tmp/intel-graphics.key
+        echo "deb [arch=amd64 signed-by=/usr/share/keyrings/intel-graphics.gpg] https://repositories.intel.com/gpu/ubuntu jammy client" | tee /etc/apt/sources.list.d/intel-gpu-jammy.list
+        apt-get -qq update
 
-    # intel-media-va-driver-non-free is built from source in the
-    # intel-media-driver Dockerfile stage for Battlemage (Xe2) support
-    apt-get -qq install --no-install-recommends --no-install-suggests -y \
-        libmfx1
-    rm -f /usr/share/keyrings/intel-graphics.gpg
-    rm -f /etc/apt/sources.list.d/intel-gpu-jammy.list
+        # intel-media-va-driver-non-free is built from source in the
+        # intel-media-driver Dockerfile stage for Battlemage (Xe2) support
+        apt-get -qq install --no-install-recommends --no-install-suggests -y \
+            libmfx1
+        rm -f /usr/share/keyrings/intel-graphics.gpg
+        rm -f /etc/apt/sources.list.d/intel-gpu-jammy.list
+    else
+        echo "WARNING: repositories.intel.com unreachable; skipping libmfx1 (legacy Intel QSV)"
+    fi
 
     # upgrade libva2, oneVPL runtime, and libvpl2 from trixie for Battlemage support
     echo "deb http://deb.debian.org/debian trixie main" > /etc/apt/sources.list.d/trixie.list

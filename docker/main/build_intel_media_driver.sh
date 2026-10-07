@@ -17,7 +17,20 @@ apt-get -qq install -y wget gnupg ca-certificates cmake g++ make pkg-config
 
 # Use Intel's jammy repo for newer libva-dev (2.22) which provides the
 # VVC/VVC-decode headers required by media-driver 25.x
-wget -qO - https://repositories.intel.com/gpu/intel-graphics.key | gpg --yes --dearmor --output /usr/share/keyrings/intel-graphics.gpg
+#
+# repositories.intel.com refuses connections from some regions. That newer
+# libva-dev is a hard requirement for media-driver 25.x, so when the repo is
+# unreachable fall back to an empty rootfs (exactly as the non-x86_64 path
+# above does) instead of failing the whole image build. The resulting image has
+# no Intel iHD driver, which only matters on hosts with an Intel GPU.
+if ! wget -q -O /tmp/intel-graphics.key https://repositories.intel.com/gpu/intel-graphics.key; then
+    echo "WARNING: repositories.intel.com unreachable; skipping Intel media driver build"
+    mkdir -p /rootfs
+    exit 0
+fi
+
+gpg --yes --dearmor --output /usr/share/keyrings/intel-graphics.gpg < /tmp/intel-graphics.key
+rm -f /tmp/intel-graphics.key
 echo "deb [arch=amd64 signed-by=/usr/share/keyrings/intel-graphics.gpg] https://repositories.intel.com/gpu/ubuntu jammy client" > /etc/apt/sources.list.d/intel-gpu-jammy.list
 apt-get -qq update
 apt-get -qq install -y libva-dev

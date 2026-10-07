@@ -1,9 +1,7 @@
 import {
   LuActivity,
-  LuGithub,
   LuLanguages,
   LuLayers,
-  LuLifeBuoy,
   LuList,
   LuLogOut,
   LuMessageSquare,
@@ -77,7 +75,6 @@ import { Badge } from "@/components/ui/badge";
 import { useTranslation } from "react-i18next";
 import { supportedLanguageKeys } from "@/lib/const";
 
-import { useDocDomain } from "@/hooks/use-doc-domain";
 import { MdCategory } from "react-icons/md";
 
 type GeneralSettingsProps = {
@@ -90,7 +87,6 @@ export default function GeneralSettings({
   large,
 }: GeneralSettingsProps) {
   const { t } = useTranslation(["common", "views/settings"]);
-  const { getLocaleDocUrl } = useDocDomain();
   const { data: profile } = useSWR("profile");
   const { data: config } = useSWR<FrigateConfig>("config");
   const { data: profilesData, mutate: updateProfiles } =
@@ -741,35 +737,26 @@ export default function GeneralSettings({
                 </SubItemContent>
               </Portal>
             </SubItem>
+            {/* Help section hidden from the menu.
             <DropdownMenuLabel className={isDesktop ? "mt-3" : "mt-1"}>
               {t("menu.help")}
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <a href={getLocaleDocUrl("/")} target="_blank">
-              <MenuItem
-                className={
-                  isDesktop ? "cursor-pointer" : "flex items-center p-2 text-sm"
-                }
-                aria-label={t("menu.documentation.label")}
-              >
-                <LuLifeBuoy className="mr-2 size-4" />
-                <span>{t("menu.documentation.title")}</span>
-              </MenuItem>
-            </a>
             <a
-              href="https://github.com/blakeblackshear/frigate"
+              href="https://github.com/mohammadkhedmati/frigate"
               target="_blank"
             >
               <MenuItem
                 className={
                   isDesktop ? "cursor-pointer" : "flex items-center p-2 text-sm"
                 }
-                aria-label="Frigate Github"
+                aria-label={`${APP_NAME} GitHub`}
               >
                 <LuGithub className="mr-2 size-4" />
                 <span>GitHub</span>
               </MenuItem>
             </a>
+            */}
             {isAdmin && (
               <>
                 <DropdownMenuSeparator

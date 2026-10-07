@@ -23,6 +23,7 @@ from peewee import DoesNotExist
 from frigate.config import FfmpegConfig, FrigateConfig
 from frigate.config.camera.record import ChaptersEnum
 from frigate.const import (
+    APP_NAME,
     CACHE_DIR,
     CLIPS_DIR,
     EXPORT_DIR,
@@ -1294,7 +1295,7 @@ class RecordingExporter(threading.Thread):
             ).split(" ")
 
         # add metadata
-        title = f"Frigate Recording for {self.camera}, {self.get_datetime_from_timestamp(self.start_time)} - {self.get_datetime_from_timestamp(self.end_time)}"
+        title = f"{APP_NAME} Recording for {self.camera}, {self.get_datetime_from_timestamp(self.start_time)} - {self.get_datetime_from_timestamp(self.end_time)}"
         creation_time = datetime.datetime.fromtimestamp(
             self.start_time, tz=datetime.UTC
         ).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
@@ -1403,7 +1404,7 @@ class RecordingExporter(threading.Thread):
             ).split(" ")
 
         # add metadata
-        title = f"Frigate Preview for {self.camera}, {self.get_datetime_from_timestamp(self.start_time)} - {self.get_datetime_from_timestamp(self.end_time)}"
+        title = f"{APP_NAME} Preview for {self.camera}, {self.get_datetime_from_timestamp(self.start_time)} - {self.get_datetime_from_timestamp(self.end_time)}"
         creation_time = datetime.datetime.fromtimestamp(
             self.start_time, tz=datetime.UTC
         ).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
