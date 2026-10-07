@@ -25,6 +25,7 @@ import { Button } from "@/components/ui/button";
 import Heading from "@/components/ui/heading";
 import { Toaster } from "@/components/ui/sonner";
 import { useAutoFrigateStats } from "@/hooks/use-stats";
+import { APP_NAME } from "@/lib/branding";
 
 type Failure = {
   error: unknown;
@@ -66,7 +67,7 @@ function crashReport({ error, componentStack }: Failure, version?: string) {
   const stack = error instanceof Error ? error.stack : undefined;
 
   return [
-    "Frigate UI crash report",
+    `${APP_NAME} UI crash report`,
     `Version: ${version || "unknown"}`,
     `Page: ${window.location.href}`,
     `Browser: ${navigator.userAgent}`,
