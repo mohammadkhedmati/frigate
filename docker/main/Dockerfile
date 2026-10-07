@@ -91,9 +91,13 @@ RUN apt-get -qq update \
     && pip3 install -r /requirements-ov.txt
 
 # Get OpenVino Model
+# download.tensorflow.org now 403s on this object (pulled from the bucket);
+# fall back to the Wayback Machine's capture of the same file if the primary
+# download fails.
 RUN --mount=type=bind,source=docker/main/build_ov_model.py,target=/build_ov_model.py \
     mkdir /models && cd /models \
-    && wget http://download.tensorflow.org/models/object_detection/ssdlite_mobilenet_v2_coco_2018_05_09.tar.gz \
+    && (wget http://download.tensorflow.org/models/object_detection/ssdlite_mobilenet_v2_coco_2018_05_09.tar.gz \
+        || wget https://web.archive.org/web/20240116161259/http://download.tensorflow.org/models/object_detection/ssdlite_mobilenet_v2_coco_2018_05_09.tar.gz) \
     && tar -xvf ssdlite_mobilenet_v2_coco_2018_05_09.tar.gz \
     && python3 /build_ov_model.py
 
