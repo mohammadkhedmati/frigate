@@ -63,7 +63,7 @@ export default defineConfig({
     include: ["src/**/*.{test,spec}.{ts,tsx}"],
     alias: {
       "testing-library": path.resolve(
-        __dirname,
+        import.meta.dirname,
         "./__test__/testing-library.js",
       ),
     },
