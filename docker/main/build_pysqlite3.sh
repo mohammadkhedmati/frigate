@@ -20,7 +20,11 @@ if [[ ! -d "sqlite" ]]; then
   # For SQLite 3.46.1, the amalgamation version is 3460100
   SQLITE_AMALGAMATION_VERSION="3460100"
 
-  wget https://www.sqlite.org/2024/sqlite-amalgamation-${SQLITE_AMALGAMATION_VERSION}.zip -O sqlite-amalgamation.zip
+  # sqlite.org is occasionally unreachable (DNS/CDN outages); fall back to a
+  # verified Wayback Machine capture of the same file if the primary download
+  # times out.
+  wget --timeout=30 --tries=2 https://www.sqlite.org/2024/sqlite-amalgamation-${SQLITE_AMALGAMATION_VERSION}.zip -O sqlite-amalgamation.zip \
+      || wget https://web.archive.org/web/20250111081858id_/https://sqlite.org/2024/sqlite-amalgamation-${SQLITE_AMALGAMATION_VERSION}.zip -O sqlite-amalgamation.zip
   unzip sqlite-amalgamation.zip
   mv sqlite-amalgamation-${SQLITE_AMALGAMATION_VERSION}/* .
   rmdir sqlite-amalgamation-${SQLITE_AMALGAMATION_VERSION}
