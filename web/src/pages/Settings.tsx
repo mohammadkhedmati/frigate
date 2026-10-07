@@ -304,13 +304,20 @@ const SECTION_VIEWS = {
   regionGrid: RegionGridSettingsView,
 };
 
-const settingsGroups = settingsViewGroups.map((group) => ({
-  label: group.label,
-  items: group.views.map((key) => ({
-    key,
-    component: SECTION_VIEWS[key],
-  })),
-}));
+// The Frigate+ settings page names a third-party service we don't offer on
+// this fork, so it's filtered out here rather than in upstream's
+// settingsViewGroups (keeps this a one-file diff against upstream).
+const settingsGroups = settingsViewGroups
+  .map((group) => ({
+    label: group.label,
+    items: group.views
+      .filter((key) => key !== "frigateplus")
+      .map((key) => ({
+        key,
+        component: SECTION_VIEWS[key],
+      })),
+  }))
+  .filter((group) => group.items.length > 0);
 
 const CAMERA_SELECT_BUTTON_PAGES = [
   "debug",
